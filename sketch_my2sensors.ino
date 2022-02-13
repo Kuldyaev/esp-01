@@ -43,11 +43,14 @@ void loop() {
   digitalWrite(11, HIGH); 
   last_time=millis();
   while(millis() < last_time+15000){
+    Serial.println(meas);
     if (Serial.available()){
+        if(String(Serial.readString())=="OK"){delay(15000);}
         Serial.println(String(Serial.readString()));
-       } 
+    } 
+    delay(500);
   }
   digitalWrite(11, LOW);    // turn the LED off by making the voltage LOW
   Wire.end();
-  delay(500);
+  delay(10000);
 }
