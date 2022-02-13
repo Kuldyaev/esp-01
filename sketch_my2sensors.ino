@@ -1,6 +1,9 @@
 #include <AM2320_asukiaaa.h>
 #include <Adafruit_BMP085.h>
-
+#define RX 9                     // Определяем пин UART RX
+#define TX 10
+#include <SoftwareSerial.h>      // Подключаем библиотеку программного UART
+SoftwareSerial mySerial(RX, TX); // Создаём объект программного UART  
 Adafruit_BMP085 bmp;
 AM2320_asukiaaa mySensor;
 
@@ -10,12 +13,16 @@ void setup() {
   pinMode(12, OUTPUT);
   pinMode(11, OUTPUT);
   Serial.begin(9600);
-//  while(!Serial);
+  while(!Serial);
+ //-------Запуск Serial ----------------------------//
+  mySerial.begin(9600);                             // стартуем связь с портом
+  while (!mySerial) {delay(10);}                      // ждем запуск порта Serial
   Serial.println("started");
 }
 
 void loop() {
   String meas = "#MEAS";
+  String xxx = "xxx";
   digitalWrite(12, HIGH); 
   delay(1000);
   Wire.begin();
@@ -26,6 +33,7 @@ void loop() {
     meas+=":t=" + String(mySensor.temperatureC) + "C" +";h=" + String(mySensor.humidity) + "%";
     int val = analogRead(A0);
     meas+=";l="+String(val);
+    xxx = String(val);
   }
   Wire.end();
   delay(2000);
@@ -43,12 +51,13 @@ void loop() {
   digitalWrite(11, HIGH); 
   last_time=millis();
   while(millis() < last_time+15000){
-    Serial.println(meas);
+     mySerial.print(meas);
+     delay(100);
     if (Serial.available()){
         if(String(Serial.readString())=="OK"){delay(15000);}
         Serial.println(String(Serial.readString()));
     } 
-    delay(500);
+    delay(15000);
   }
   digitalWrite(11, LOW);    // turn the LED off by making the voltage LOW
   Wire.end();
