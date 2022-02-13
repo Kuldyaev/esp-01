@@ -9,6 +9,14 @@ AM2320_asukiaaa mySensor;
 
 unsigned long last_time;
 
+struct Str {
+  int val_a;
+  int val_b;
+  int val_c;
+  int val_d;
+  int val_e;
+};
+
 void setup() {
   pinMode(12, OUTPUT);
   pinMode(11, OUTPUT);
@@ -21,8 +29,8 @@ void setup() {
 }
 
 void loop() {
+  Str buf;
   String meas = "#MEAS";
-  String xxx = "xxx";
   digitalWrite(12, HIGH); 
   delay(1000);
   Wire.begin();
@@ -33,7 +41,9 @@ void loop() {
     meas+=":t=" + String(mySensor.temperatureC) + "C" +";h=" + String(mySensor.humidity) + "%";
     int val = analogRead(A0);
     meas+=";l="+String(val);
-    xxx = String(val);
+    buf.val_a = mySensor.temperatureC*100;
+    buf.val_b = mySensor.humidity*100;
+    buf.val_c = val;
   }
   Wire.end();
   delay(2000);
@@ -43,7 +53,11 @@ void loop() {
   while (1) {}
   }
   meas+=";T="+String(bmp.readTemperature())+" *C;p="+String(bmp.readPressure()/133)+"mm$#";
+  buf.val_d = bmp.readTemperature()*100;
+  buf.val_e = bmp.readPressure()/133;
   Serial.println(meas);
+  mySerial.write((byte*)&buf, sizeof(buf));
+  delay(2000);
   Wire.end();
   digitalWrite(12, LOW);    // turn the LED off by making the voltage LOW
   Wire.begin();
@@ -51,7 +65,6 @@ void loop() {
   digitalWrite(11, HIGH); 
   last_time=millis();
   while(millis() < last_time+15000){
-     mySerial.print(meas);
      delay(100);
     if (Serial.available()){
         if(String(Serial.readString())=="OK"){delay(15000);}
