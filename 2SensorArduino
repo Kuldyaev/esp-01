@@ -41,7 +41,7 @@ void loop() {
   Serial.println("Could not find a valid BMP085 sensor, check wiring!");
   while (1) {}
   }
-  meas+=";T:"+String(bmp.readTemperature())+";p:"+String(bmp.readPressure()/133) + "#";
+  meas+=";T:"+String(bmp.readTemperature())+";p:"+String(bmp.readPressure()/133) + ";#";
   //Serial.println(meas);
   delay(2000);
   Wire.end();
