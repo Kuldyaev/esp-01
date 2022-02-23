@@ -1,17 +1,15 @@
-#include <Wire.h>                // Подключаем библиотеку Wire
 #include <DS18B20.h>             // Подключаем библиотеку для датчика Dallas DS18B20 
 #include <Adafruit_BMP085.h>     // Подключаем библиотеку для датчика BMP085/BMP180
+#include <AM2320_asukiaaa.h>     // Подключаем библиотеку для датчика AM2320
 
 DS18B20 ds(2);                   // Обзываем датчик Dallas DS18B20 как ds, подключен к пину 2 
 Adafruit_BMP085 bmp;             // Обзываем датчик BMP180 как bmp
+AM2320_asukiaaa mySensor;        // Обзываем датчик АМ2320 как mySensor
+
+int ledPins[6]={7,8,9,10,11,12};
 
 void setup() {
- pinMode(7, OUTPUT);  //определим пин 7 как вывод
- pinMode(8, OUTPUT);  //определим пин 8 как вывод
- pinMode(9, OUTPUT);  //определим пин 8 как вывод
- pinMode(10, OUTPUT);  //определим пин 10 как вывод
- pinMode(11, OUTPUT);  //определим пин 11 как вывод
- pinMode(12, OUTPUT);  //определим пин 12 как вывод
+ for(int i=0;i<8;i++){pinMode(ledPins[i],OUTPUT);}   // настройка выводов индикации светодиодов в режим OUTPUT
  Wire.begin();         //  запускаем библиотеку Wire
  Serial.begin(9600);   // запускаем Serial
  while(!Serial);       // ждем запуск Serial 
@@ -39,6 +37,7 @@ void setup() {
  Serial.println("I2C Сканер - поиск устройств:");
  byte error, address;
  int nDevices;
+ digitalWrite(12, HIGH);  //Обеспечиваем питание на пин 12  питание для датчиков
  Serial.println("Сканирую...");
    nDevices = 0;
    for(address = 8; address < 127; address++ ){
@@ -62,12 +61,24 @@ void setup() {
     if (nDevices == 0)
         Serial.println("Устройств не найдено");
     else
-        Serial.println("Посик I2c устройств завершен");
-
+        Serial.println("Поиcк I2c устройств завершен");
+  Wire.end();
+  delay(2000);
+  Wire.begin();
+  mySensor.setWire(&Wire);
+  delay(500);
+  if (mySensor.update() != 0) {
+    Serial.println("Error: Cannot update sensor values.");
+  } else {
+    Serial.println("Данные для AM2320 температура: " + String(mySensor.temperatureC) + "C");
+    Serial.println("Данные для AM2320 влажность: " + String(mySensor.humidity) + "%");
+  }
  Serial.println("Показания датчика Dallas DS18B20: " + String(ds.getTempC()));
  Serial.println("Данные для фоторезистора на пине 0: " + String(analogRead(A0)));
- digitalWrite(12, HIGH);  //Обеспечиваем питание на пин 12  питание для датчиков
-  if (!bmp.begin()) {
+ Wire.end();
+  delay(2000);
+ Wire.begin();
+   if (!bmp.begin()) {
      Serial.println("Could not find a valid BMP085 sensor, check wiring!");
      while (1) {}
    } else {
