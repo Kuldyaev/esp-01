@@ -6,7 +6,9 @@ DS18B20 ds(2);                   // Обзываем датчик Dallas DS18B20
 Adafruit_BMP085 bmp;             // Обзываем датчик BMP180 как bmp
 AM2320_asukiaaa mySensor;        // Обзываем датчик АМ2320 как mySensor
 
-int ledPins[6]={7,8,9,10,11,12};
+int ledPins[6]={7,8,9,10,11,12}; // формируем массив контактов управления питанием сенсеров и светодиодом   
+int a1Pin=A1;                    // контакт подключения аналогового одного емкостного датчика
+int a2Pin=A2;                    // контакт подключения аналогового второго емкостного датчика
 
 void setup() {
  for(int i=0;i<8;i++){pinMode(ledPins[i],OUTPUT);}   // настройка выводов индикации светодиодов в режим OUTPUT
@@ -75,6 +77,8 @@ void setup() {
   }
  Serial.println("Показания датчика Dallas DS18B20: " + String(ds.getTempC()));
  Serial.println("Данные для фоторезистора на пине 0: " + String(analogRead(A0)));
+ Serial.println("Данные для емкостного датчика на пине 1: " + String(analogRead(A1)));
+ Serial.println("Данные для емкостного датчика на пине 2: " + String(analogRead(A2)));
  Wire.end();
   delay(2000);
  Wire.begin();
