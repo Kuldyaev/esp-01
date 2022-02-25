@@ -89,7 +89,6 @@ void setup() {
     Serial.println("Данные для BMP180 температура: " + String(bmp.readTemperature()) + "C");
     Serial.println("Данные для BMP180 атм давление: " + String(bmp.readPressure()/133) + "mm ");
    } 
-
  delay(5000); 
  digitalWrite(12, LOW);  //Отключаем питание на пин 12   питание для датчиков
 }
