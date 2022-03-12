@@ -76,6 +76,7 @@ void loop() {
  meas+="bot:" + String(botName) + ";tm:"; 
  for(int i=0;i<6;i++){meas+=String(myData[i]) + "-";};
  meas = meas.substring(0,  meas.length()-1); 
+ meas += ";bt:" + String(botName);
  meas+=";tA:" + String(Sens[0]) + ";tD:" + String(Sens[2]) + ";tB:" + String(Sens[6]) + ";hA:" + String(Sens[1]) + ";lA:" + String(int(Sens[3])) + ";pB:" + String(int(Sens[7])) + ";hD:" + String(int(Sens[4])) + ";#";
  //---- передаем данные в Serial -----------------//
  if(lightsOn){digitalWrite(7, HIGH);};
